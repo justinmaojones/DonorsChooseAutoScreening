@@ -2,3 +2,9 @@ data/full_labeled_essays.csv
 data/full_labeled_essays*
 data/opendata_essays*
 data/essays_and_labels*
+data/all_resources*
+data/all_essays*
+data/all_projects*
+repo-setup.sh
+data/BalancedFull.pk1
+data/FeatureSet_A.pk1
