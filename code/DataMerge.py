@@ -6,7 +6,7 @@ import os
 
            
 
-def MergeToFull(extractFileName, fullDf, outFileName, extractedCols):
+def MergeToFull(extractFileName, fullDf, outFileName, extractedCols=[]):
 
     # extractFileName = "all_essays.csv"
     # fullFileName= "clean_labeled_project_data.csv"
@@ -27,11 +27,15 @@ def MergeToFull(extractFileName, fullDf, outFileName, extractedCols):
     useheaders = True
         
     chunker = pd.read_csv(filepath,iterator=True,chunksize=chunksize,dtype=unicode)
+    j=0
     for chunk in chunker:
-        chunk = chunk[extractedCols]
+        j += 1
+        print "chunk",j
+        if len(extractedCols)>0:
+            chunk = chunk[extractedCols]
         chunk._projectid = chunk._projectid.str.replace('"','')
         
-        merged = pd.merge(fullDf,chunk,how='inner',on=["_projectid"])
+        merged = pd.merge(fullDf,chunk,how='left',on=["_projectid"])
         with open(outFilePath,'a') as f:
             merged.to_csv(f,header=useheaders, index=False)
         useheaders = False    

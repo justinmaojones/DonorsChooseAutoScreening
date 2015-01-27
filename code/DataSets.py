@@ -45,6 +45,7 @@ def PickleVectorized():
 def FeatureSetA_Pickle():
     # LOAD DATA
     df = pickleLoad('BalancedFull')
+    projectids = df._projectid
     # FEATURE SET 1
     denseheaders,densefeatures = fg.getEssayFeatures(df)
     densefeatures[np.isnan(densefeatures)]=0
@@ -72,6 +73,35 @@ def FeatureSetA_Pickle():
     sparseheaders = sorted(essaywords.vocabulary_.keys(),key=lambda key: essaywords.vocabulary_[key])
     # PICKLE
     pickleIt((dense_df,train,rejected,summary,sparsefeatures,sparseheaders),"FeatureSet_A")
+
+# add resources features (count missing resources & percentage resources words also in need statement)
+def FeatureSetB_Pickle():
+    # Load featureset A    
+    dense_df,train,rejected,summary,sparsefeatures,sparseheaders = ds.pickleLoad("FeatureSet_A")
+    # Load resources features    
+    missing_resources,percent_overlap = fg.resourcesFeatures(
+                                                needsvectpicklename="BalancedFull",
+                                                resources_csv="BalancedFull_Resources.csv")         
+    # Select relevant features from FeatureSetA
+    missingfieldindicators = [col+'_mv' for col in ['short_description','need_statement','essay']]
+    engineeredfeatures = ['essay_len','maxcaps','totalcaps','dollarbool','dollarcount','email','urls']        
+    dense_df = dense_df[missingfieldindicators+engineeredfeatures]
+    # Add resources features to feature set
+    dense_df['missing_resources'] = pd.Series(missing_resources.ravel())
+    dense_df['percent_overlap'] = pd.Series(percent_overlap.ravel())
+    # Revise summary
+    summary = crm.getSummary(dense_df,rejected)
+    summary = summary[summary.index != 'rejected']
+    # Pickle it
+    pickleIt((dense_df,train,rejected,summary,sparsefeatures,sparseheaders),"FeatureSet_B")
+    
+    
+def BalancedFull_Resources():
+    df = pickleLoad('BalancedFull')
+    projectids = pd.DataFrame(df._projectid,columns=["_projectid"])
+    dm.MergeToFull(extractFileName="all_resources.csv",
+                   fullDf=projectids,
+                   outFileName="BalancedFull_Resources.csv")
 
 
     
