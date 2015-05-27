@@ -1,5 +1,7 @@
 Welcome to the DonorsChooseAutoScreening wiki!
 
+[See the Wiki here](https://github.com/justinmaojones/DonorsChooseAutoScreening/wiki/02.-Overview)
+
 Team Members: Justin Mao-Jones, Charles Guthrie, Yasumasa Miyamoto, Lucy Wang
 
 In a nutshell, the aim of this project was to build a tool that could automatically screen new submissions to DonorsChoose.org.  Submissions are textual, consisting primarily of "essays" and itemized lists of requested resources (e.g. new books, calculators, ipads, etc). More specifically, this was a binary classification of essays and itemized lists associated with each submission.  We used NLP, [TF-IDF](https://github.com/justinmaojones/DonorsChooseAutoScreening/wiki/8.-TF-IDF-Interpretation), and other features to train the model.
