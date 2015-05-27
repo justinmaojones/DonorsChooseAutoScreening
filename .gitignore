@@ -9,4 +9,4 @@ data/all_projects*
 repo-setup.sh
 data/BalancedFull.pk1
 data/FeatureSet_A.pk1
-
+*.pyc
