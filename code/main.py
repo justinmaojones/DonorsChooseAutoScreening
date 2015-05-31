@@ -1,8 +1,9 @@
 import GridSearch
 from Analysis import Analysis
 import DataSets
+import pipeline
 
-
+pipeline.main()
 
 DataSets.FeatureSetA_Pickle()
 
