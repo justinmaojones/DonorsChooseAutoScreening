@@ -4,17 +4,28 @@ import os
 
 #from sqlalchemy import create_engine
 
-           
+'''
+used in pipeline
+'''         
 
-def MergeToFull(extractFileName, fullDf, outFileName, extractedCols=[]):
+def MergeToFull(extractFileName, fullDF, outFileName, extractedCols=[]):
+    '''
+    Merge a data from a large file into an existing data frame,
+    and save the resulting file to outFileName.
 
-    # extractFileName = "all_essays.csv"
-    # fullFileName= "clean_labeled_project_data.csv"
-    # outFileName = "data_and_essays.csv"
-    # extractedCols = ['_projectid', 'title', 'short_description', 'need_statement', 'essay']
+    args:
+        extractFileName: name of external file to be loaded and incorporated
+        fullDF: existing data frame
+        outFileName: file to save the merged data frame.
+        extractedCols: if present, restrict the extractFile to these colums
+
+    returns:
+        none, but saves file to outFileName
+    '''
+    print "Merging %s to existing data frame..." % extractFileName
 
     #get file paths
-    filepath = getDataFilePath(extractFileName)
+    extractFilePath = getDataFilePath(extractFileName)
     outFilePath = getDataFilePath(outFileName)
 
     #erase output file
@@ -26,7 +37,7 @@ def MergeToFull(extractFileName, fullDf, outFileName, extractedCols=[]):
     #loop through chunks of essay data and merge
     useheaders = True
         
-    chunker = pd.read_csv(filepath,iterator=True,chunksize=chunksize,dtype=unicode)
+    chunker = pd.read_csv(extractFilePath,iterator=True,chunksize=chunksize,dtype=unicode)
     j=0
     for chunk in chunker:
         j += 1
@@ -35,10 +46,11 @@ def MergeToFull(extractFileName, fullDf, outFileName, extractedCols=[]):
             chunk = chunk[extractedCols]
         chunk._projectid = chunk._projectid.str.replace('"','')
         
-        merged = pd.merge(fullDf,chunk,how='left',on=["_projectid"])
+        merged = pd.merge(fullDF,chunk,how='left',on=["_projectid"])
         with open(outFilePath,'a') as f:
             merged.to_csv(f,header=useheaders, index=False)
-        useheaders = False    
+        useheaders = False
+    print "Merge complete" 
 
 def MergeLabelsAndEssays(extractFileName, fullFileName, outFileName, extractedCols):
 

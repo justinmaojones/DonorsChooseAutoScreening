@@ -2,21 +2,30 @@
 Created on Sun Nov 23
 
 @author: charlesdguthrie
+used in pipeline
 """
 
 import pandas as pd
 import numpy as np
 
 
-'''
-replace blank strings with nulls
-replace 1970 dates with nulls
-remove null 'got_posted'
-create 'rejected' field, where 1 = rejected, 0 = approved
-create variables to indicate nulls
-eliminate too-recent data after 10/31
-'''
 def cleanData(rawdf):
+    '''
+    replace blank strings with nulls
+    replace 1970 dates with nulls
+    remove null 'got_posted'
+    create 'rejected' field, where 1 = rejected, 0 = approved
+    create variables to indicate nulls
+    eliminate too-recent data after 10/31
+
+    args:
+        rawdf: raw uncleaned data frame
+
+    returns:
+        df: cleaned data frame
+    '''
+
+    print "Cleaning resultant merge..."
     df=rawdf
     
     #remove quotes from project id, teacher id, school id
@@ -54,12 +63,16 @@ def cleanData(rawdf):
 
     #Drop duplicates
     df = df.drop_duplicates()
+
+    print "Cleaning complete"
+
     return df
 
-'''
-bring ratio of approvals:rejections down to desired level
-'''
+
 def downSample(df, app_rej_ratio):
+    '''
+    bring ratio of approvals:rejections down to desired level
+    '''
     app=df[df.rejected==0]
     rej=df[df.rejected==1]
     
@@ -84,11 +97,10 @@ def splitOnDateAndDownSample(df,myDate):
 
     return pd.concat([trainds,testds],axis=0, ignore_index=True)
 
-
-'''
-get number of nulls, number of unique values, and ten most common values
-'''
 def getSummary(df,rejected):
+    '''
+    get number of nulls, number of unique values, and ten most common values
+    '''
     uniqueList = []
     typeList = []
     valueList = []
@@ -138,12 +150,3 @@ def getSummary(df,rejected):
     summaryDF = pd.DataFrame.from_items(summaryItems)
     #print 'Rows,Columns',df.shape
     return summaryDF
-
-
-# filen = "../data/resultant_merge.csv"
-# rawdf = pd.read_csv(filen)
-# df = cleanData(rawdf)
-# dsdf = downSample(df, 3)
-# dsdfSummary = getSummary(dsdf)
-# dsdfSummary.to_csv('../data/summary_stats.csv', index=False)
-# dsdf.to_csv('../data/clean_labeled_project_data.csv', index=False)

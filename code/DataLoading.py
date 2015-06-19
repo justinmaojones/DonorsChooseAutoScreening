@@ -3,6 +3,7 @@
 Created on Wed Nov 19 13:19:33 2014
 
 @author: justinmaojones
+used in pipeline
 """
 
 import pandas as pd

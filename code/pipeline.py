@@ -1,68 +1,80 @@
 '''
 pipeline.py
 
-to run this you need resultant_merge.csv and all_essays.csv in your data directory
+to run this you need the following in your data directory:
+    resultant_merge.csv
+    all_essays.csv
+    essays_and_labels.csv
+
 run this script from your script directory
+
+find resultant merge here:
+    https://dl.dropboxusercontent.com/u/1007031/resultant_merge.csv.zip
+or run initialMerge.py
 '''
+import pandas as pd
+import cleanResultantMerge as crm
+import DataMerge as dm
+import DataSets as ds
 
-from cleanResultantMerge import *
-from DataMerge import MergeToFull
-from DataSets import *
+def cleanAndMerge(dataDir, 
+                  resultantMergeFName, 
+                  essaysAndLabelsFName, 
+                  allEssaysFName, 
+                  pivotDate):
+    '''
+    clean up and downsample "resultant_merge.csv", and save summary statistics
 
-def main():
-    #clean up and downsample resultant merge, and save summary statistics
-    
-    filen = "../data/resultant_merge.csv"
-    
-    print "reading resultant_merge.csv..."
-    rawdf = pd.read_csv(filen)
+    args:
+        dataDir: directory where data is kept
+        resultantMergeFName: name of the "resultant merge" file 
+        essaysAndLabelsFName: name of the "essays and labels" file
+        allEssaysFName: name of the "all_essays" file
+        pivotDate: date chosen such that 70 pct of data before it will be training, after will be test.
+
+    returns: none.
+        saves the following files to data directory:
+        BalancedFull.pk1
+        BalancedFull_Essay_Vectorized.pk1
+        BalancedFull_NeedStatement_Vectorized.pk1
+    '''
+
+    print "reading %s..." % resultantMergeFName
+    rawdf = pd.read_csv(dataDir + resultantMergeFName)
     print "read complete"
-    
-    
-    
-    print "Cleaning resultant merge..."
-    df = cleanData(rawdf)
-    #dfSummary = getSummary(df)
-    #dfSummary.to_csv('../data/summary_stats.csv', index=True)
-    df.to_csv('../data/clean_labeled_project_data.csv', index=False)
-    print "Cleaning complete"
-    
-    print "Merging created_date to data..."
-    extractFileName = "essays_and_labels.csv"
-    outFileName = "data_with_dates.csv"
+
+    df1 = crm.cleanData(rawdf)
+
+    #merge essays and labels with metadata
+    outFName = "data_with_dates.csv"
     extractedCols = ['_projectid', 'created_date']
-    MergeToFull(extractFileName,df,outFileName,extractedCols)
-    
-    print "Reading... "
-    outpath = "../data/" + outFileName
-    df = pd.read_csv(outpath)
+    dm.MergeToFull(essaysAndLabelsFName,df1,outFName,extractedCols)
+
+    print "Loading %s back in... " % outFName
+    outpath = dataDir + outFName
+    df2 = pd.read_csv(outpath)
     
     print "Filtering dates..."
-    df = filterDates(df)
+    df2 = crm.filterDates(df2)
     
     print "Splitting on created_date and downsampling..."
-    df = splitOnDateAndDownSample(df,'2013-05-01')
-    
+    df2 = crm.splitOnDateAndDownSample(df2,pivotDate)
+
     #merge all_essays.csv with cleaned up project data from previous step
-    print "Merging essays to data..."
-    extractFileName = "all_essays.csv"
-    outFileName = "data_with_dates.csv"
-    extractedCols = ['_projectid', 'title', 'short_description', 'need_statement', 'essay']
-    MergeToFull(extractFileName,df,outFileName,extractedCols)
-    print "Merged essays"
-    
+    #overwrites outFile
+    extractedCols2 = ['_projectid', 'title', 'short_description', 'need_statement', 'essay']
+    dm.MergeToFull(allEssaysFName,df2,outFName,extractedCols2)
+
     print "Reading again..."
-    df = pd.read_csv("../data/" + outFileName)
-    
-    print "Merges complete."
-    
+    df3 = pd.read_csv(dataDir + outFName)
+        
     #pickle and vectorize the data
     print "Pickling merged data..."
-    ImportPickleBalancedFull(df)
+    ds.ImportPickleBalancedFull(df3)
     print "Pickle complete."
     
     print "Vectorizing essays and need statements..."
-    PickleVectorized()
+    ds.PickleVectorized()
     print "Vectorizing complete"
     
     print """
@@ -71,6 +83,25 @@ def main():
     data/BalancedFull_Essay_Vectorized.pk1
     data/BalancedFull_NeedStatement_Vectorized.pk1
     """
+def main():
+    DATA_DIR = "../data/"
+    RESULTANT_MERGE_FNAME = "resultant_merge.csv"
+    ESSAYS_AND_LABELS_FNAME = "essays_and_labels.csv"
+    ALL_ESSAYS_FNAME = "all_essays.csv"
+
+    #This pivot date was chosen to achieve a 70-30 training-test split
+    PIVOT_DATE = '2013-05-01'
+    
+    cleanAndMerge(DATA_DIR,
+                  RESULTANT_MERGE_FNAME,
+                  ESSAYS_AND_LABELS_FNAME,
+                  ALL_ESSAYS_FNAME,
+                  PIVOT_DATE)
+
+    #TODO: make sure this can be eliminated
+    #df.to_csv('../data/clean_labeled_project_data.csv', index=False)
+    
+
     
 if __name__ == '__main__':
     main()
