@@ -2,23 +2,20 @@
 pipeline.py
 
 to run this you need the following in your data directory:
-    resultant_merge.csv
     all_essays.csv
     essays_and_labels.csv
+    opendata_projects.csv (found at http://data.donorschoose.org/open-data/overview/)
 
 run this script from your script directory
-
-find resultant merge here:
-    https://dl.dropboxusercontent.com/u/1007031/resultant_merge.csv.zip
-or run initialMerge.py
 '''
 import pandas as pd
 import cleanResultantMerge as crm
 import DataMerge as dm
 import DataSets as ds
+import initialMerge
 
 def cleanAndMerge(dataDir, 
-                  resultantMergeFName, 
+                  projectsFName, 
                   essaysAndLabelsFName, 
                   allEssaysFName, 
                   pivotDate):
@@ -27,7 +24,7 @@ def cleanAndMerge(dataDir,
 
     args:
         dataDir: directory where data is kept
-        resultantMergeFName: name of the "resultant merge" file 
+        projectsFName: name of the "opendata_projects" file 
         essaysAndLabelsFName: name of the "essays and labels" file
         allEssaysFName: name of the "all_essays" file
         pivotDate: date chosen such that 70 pct of data before it will be training, after will be test.
@@ -39,10 +36,8 @@ def cleanAndMerge(dataDir,
         BalancedFull_NeedStatement_Vectorized.pk1
     '''
 
-    print "reading %s..." % resultantMergeFName
-    rawdf = pd.read_csv(dataDir + resultantMergeFName)
-    print "read complete"
-
+    #initial merge
+    rawdf = initialMerge.initial_merge(dataDir,essaysAndLabelsFName,projectsFName)
     df1 = crm.cleanData(rawdf)
 
     #merge essays and labels with metadata
@@ -62,10 +57,11 @@ def cleanAndMerge(dataDir,
 
     #merge all_essays.csv with cleaned up project data from previous step
     #overwrites outFile
+    print "Rewriting %s" %outFName
     extractedCols2 = ['_projectid', 'title', 'short_description', 'need_statement', 'essay']
     dm.MergeToFull(allEssaysFName,df2,outFName,extractedCols2)
 
-    print "Reading again..."
+    print "Reading %s" % outFName
     df3 = pd.read_csv(dataDir + outFName)
         
     #pickle and vectorize the data
