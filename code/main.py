@@ -2,9 +2,15 @@ import GridSearch
 from Analysis import Analysis
 import DataSets
 import pipeline
+import initialMerge
 
+print "==> Initial merge"
+initialMerge.main()
+
+print "==> Run pipeline"
 pipeline.main()
 
+print "==> Generate feature set and then pickle it"
 DataSets.FeatureSetA_Pickle()
 
 '''
@@ -18,6 +24,7 @@ print '==> grid search on sparse features only'
 GridSearch.runAllGridSearches(FeatureSet='FeatureSet_A',dense=False,sparse=True)
 '''
 
+print "==> Run analysis"
 # run analysis
 analysis = Analysis(DataSet='FeatureSet_A',clf_kwargs={'penalty':'l1','C':1.0})
 
