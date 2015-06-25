@@ -4,14 +4,14 @@ import DataSets
 import pipeline
 import initialMerge
 
-print "==> Initial merge"
-initialMerge.main()
+#print "==> Initial merge"
+#initialMerge.main()
 
-print "==> Run pipeline"
-pipeline.main()
+#print "==> Run pipeline"
+#pipeline.main()
 
-print "==> Generate feature set and then pickle it"
-DataSets.FeatureSetA_Pickle()
+#print "==> Generate feature set and then pickle it"
+#DataSets.FeatureSetA_Pickle()
 
 '''
 print '==> grid search on dense + sparse features'
