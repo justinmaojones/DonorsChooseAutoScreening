@@ -27,9 +27,11 @@ To build the models:
 ```
 git clone https://github.com/justinmaojones/DonorsChooseAutoScreening
 cd DonorsChooseAutoScreening/data
-gunzip BalancedFull.pk1.gz
-gunzip BalancedFull_Essay_Vectorized.pk1.gz
+unzip FeatureSet_A.pk1.zip
 cd ../code
+
+# it is recommended to run main.py in an IDE instead to see the output of
+# all the charts inside the IDE. Note that all charts are saved to misc/
 ipython -i main.py
 ```
 
