@@ -10,20 +10,27 @@ In a nutshell, the aim of this project was to build a tool that could automatica
 
 The purpose of this wiki is to provide an overview of the modeling and analysis performed.  The material in this wiki goes beyond what is in a [final report](https://github.com/justinmaojones/DonorsChooseAutoScreening/blob/master/FinalReport_DonorsChooseAutoScreening.pdf) produced as part of a [class project](https://github.com/charlesdguthrie/frontrow/blob/master/final_report/fall14_ds_project_instructions.pdf).  Also, please feel free to browse our [code](https://github.com/justinmaojones/DonorsChooseAutoScreening).
 
+<!---
 #To Run the Code
 You will need the following data sets in the 'data' directory:
 - opendata_projects.csv (found at http://data.donorschoose.org/open-data/overview/)
 - all_essays.csv
 - essays_and_labels.csv
+-->
 
 Package requirements:
-- pandas
-- textmining
-- prettyplotlib
+- NLTK [http://www.nltk.org/install.html]
+- prettyplotlib [https://github.com/olgabot/prettyplotlib/wiki/Installation]
 
 
 To build the models:
-1. download the data [to where?]
-1. run main.py to process the data and run the models
+```
+git clone https://github.com/justinmaojones/DonorsChooseAutoScreening
+cd DonorsChooseAutoScreening/data
+gunzip BalancedFull.pk1.gz
+gunzip BalancedFull_Essay_Vectorized.pk1.gz
+cd ../code
+ipython -i main.py
+```
 
 Disclaimer: This model has not been incorporated at DonorsChoose.org.
