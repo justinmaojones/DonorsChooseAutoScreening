@@ -29,9 +29,9 @@ git clone https://github.com/justinmaojones/DonorsChooseAutoScreening
 cd DonorsChooseAutoScreening/data
 unzip FeatureSet_A.pk1.zip
 cd ../code
-
-# it is recommended to run main.py in an IDE instead to see the output of
-# all the charts inside the IDE. Note that all charts are saved to misc/
+```
+It is then recommended to run `main.py` in an IDE instead to see the output of all the charts inside the IDE. Note that all charts are saved to `misc/`.
+```
 ipython -i main.py
 ```
 
